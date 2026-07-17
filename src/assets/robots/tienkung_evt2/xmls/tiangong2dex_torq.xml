@@ -414,5 +414,6 @@
     <gyro name="imu_ang_vel" site="pelvis_site"/>
     <velocimeter name="imu_lin_vel" site="pelvis_site"/>
     <accelerometer name="imu_acc" site="pelvis_site"/>
+    <subtreeangmom name="root_angmom" body="pelvis"/>
   </sensor>
 </mujoco>
