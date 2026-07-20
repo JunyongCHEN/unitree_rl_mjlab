@@ -330,40 +330,6 @@
     </body>
   </worldbody>
 
-  <actuator>
-    <motor name="hip_pitch_l_joint_ctrl" joint="hip_pitch_l_joint" class="motor_235" />
-    <motor name="hip_roll_l_joint_ctrl" joint="hip_roll_l_joint" class="motor_235" />
-    <motor name="hip_yaw_l_joint_ctrl" joint="hip_yaw_l_joint" class="motor_150" />
-    <motor name="knee_pitch_l_joint_ctrl" joint="knee_pitch_l_joint" class="motor_400" />
-    <motor name="ankle_pitch_l_joint_ctrl" joint="ankle_pitch_l_joint" class="motor_55" />
-    <motor name="ankle_roll_l_joint_ctrl" joint="ankle_roll_l_joint" class="motor_55" />
-    <motor name="hip_pitch_r_joint_ctrl" joint="hip_pitch_r_joint" class="motor_235" />
-    <motor name="hip_roll_r_joint_ctrl" joint="hip_roll_r_joint" class="motor_235" />
-    <motor name="hip_yaw_r_joint_ctrl" joint="hip_yaw_r_joint" class="motor_150" />
-    <motor name="knee_pitch_r_joint_ctrl" joint="knee_pitch_r_joint" class="motor_400" />
-    <motor name="ankle_pitch_r_joint_ctrl" joint="ankle_pitch_r_joint" class="motor_55" />
-    <motor name="ankle_roll_r_joint_ctrl" joint="ankle_roll_r_joint" class="motor_55" />
-    <motor name="waist_yaw_joint_ctrl" joint="waist_yaw_joint" class="motor_91" />
-    <motor name="waist_roll_joint_ctrl" joint="waist_roll_joint" class="motor_150" />
-    <motor name="waist_pitch_joint_ctrl" joint="waist_pitch_joint" class="motor_150" />
-    <motor name="head_yaw_joint_ctrl" joint="head_yaw_joint" class="motor_6_3" />
-    <motor name="head_pitch_joint_ctrl" joint="head_pitch_joint" class="motor_6_3" />
-    <motor name="shoulder_pitch_l_joint_ctrl" joint="shoulder_pitch_l_joint" class="motor_90" />
-    <motor name="shoulder_roll_l_joint_ctrl" joint="shoulder_roll_l_joint" class="motor_90" />
-    <motor name="shoulder_yaw_l_joint_ctrl" joint="shoulder_yaw_l_joint" class="motor_50" />
-    <motor name="elbow_pitch_l_joint_ctrl" joint="elbow_pitch_l_joint" class="motor_50" />
-    <motor name="elbow_yaw_l_joint_ctrl" joint="elbow_yaw_l_joint" class="motor_25" />
-    <motor name="wrist_pitch_l_joint_ctrl" joint="wrist_pitch_l_joint" class="motor_25" />
-    <motor name="wrist_roll_l_joint_ctrl" joint="wrist_roll_l_joint" class="motor_25" />
-    <motor name="shoulder_pitch_r_joint_ctrl" joint="shoulder_pitch_r_joint" class="motor_90" />
-    <motor name="shoulder_roll_r_joint_ctrl" joint="shoulder_roll_r_joint" class="motor_90" />
-    <motor name="shoulder_yaw_r_joint_ctrl" joint="shoulder_yaw_r_joint" class="motor_50" />
-    <motor name="elbow_pitch_r_joint_ctrl" joint="elbow_pitch_r_joint" class="motor_50" />
-    <motor name="elbow_yaw_r_joint_ctrl" joint="elbow_yaw_r_joint" class="motor_25" />
-    <motor name="wrist_pitch_r_joint_ctrl" joint="wrist_pitch_r_joint" class="motor_25" />
-    <motor name="wrist_roll_r_joint_ctrl" joint="wrist_roll_r_joint" class="motor_25" />
-  </actuator>
-
   <contact>
     <exclude body1="pelvis" body2="hip_pitch_l_link" />
     <exclude body1="hip_pitch_l_link" body2="hip_roll_l_link" />
