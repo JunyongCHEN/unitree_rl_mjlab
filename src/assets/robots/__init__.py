@@ -44,3 +44,10 @@ from .unitree_h2.h2_constants import (
 from .unitree_h2.h2_constants import (
   get_h2_robot_cfg as get_h2_robot_cfg,
 )
+
+from .tienkung_evt2.tienkung_evt2_constants import (
+  TIENKUNG_EVT2_ACTION_SCALE as TIENKUNG_EVT2_ACTION_SCALE,
+)
+from .tienkung_evt2.tienkung_evt2_constants import (
+  get_tienkung_evt2_robot_cfg as get_tienkung_evt2_robot_cfg,
+)
