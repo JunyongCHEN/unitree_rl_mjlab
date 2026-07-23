@@ -182,47 +182,31 @@ WRIST_ACTUATOR = BuiltinPositionActuatorCfg(
 ##
 # Keyframe config.
 #
-# Initial standing pose. Values are taken from tiangong.py init_state.
+# Initial standing pose: arm angles follow the tiangong.py reference, while the
+# legs are bent into a deeper crouch to lower the COM (see HOME_KEYFRAME).
 ##
 
 HOME_KEYFRAME = EntityCfg.InitialStateCfg(
+    # Crouched standing pose matched to the Unitree H1 configuration. Bending the
+    # knees and ankles more lowers the COM and makes the initial state easier to
+    # balance under MuJoCo's position actuators. The pelvis height is set so the
+    # foot capsule geoms just touch the ground plane.
     pos=(0.0, 0.0, 0.97),
     joint_pos={
         # Legs.
-        "hip_yaw_l_joint": 0.0,
-        "hip_roll_l_joint": 0.0,
-        "hip_pitch_l_joint": -0.15,
-        "knee_pitch_l_joint": 0.3,
-        "ankle_pitch_l_joint": -0.15,
-        "ankle_roll_l_joint": 0.0,
-        "hip_yaw_r_joint": 0.0,
-        "hip_roll_r_joint": 0.0,
-        "hip_pitch_r_joint": -0.15,
-        "knee_pitch_r_joint": 0.3,
-        "ankle_pitch_r_joint": -0.15,
-        "ankle_roll_r_joint": 0.0,
-        # Waist.
-        "waist_yaw_joint": 0.0,
-        "waist_roll_joint": 0.0,
-        "waist_pitch_joint": 0.0,
-        # Head.
-        "head_yaw_joint": 0.0,
-        "head_pitch_joint": 0.0,
-        # Arms.
-        "shoulder_pitch_l_joint": 0.2,
+        ".*hip_pitch.*_joint": -0.2,
+        ".*knee_pitch.*_joint": 0.5,
+        ".*ankle_pitch.*_joint": -0.3,
+        # Arms. Values follow the TienKung-Lab reference (tiangong.py) and the
+        # model's actual joint conventions. IMPORTANT: elbow_pitch range is
+        # [-2.618, +0.262]; its natural flexion direction is NEGATIVE, so the
+        # forearm bends forward at -0.5. A positive elbow default (e.g. the old
+        # +0.52) is past the joint limit and pins the arm straight out behind
+        # the robot. shoulder_roll splays the arms slightly out from the torso.
+        ".*shoulder_pitch.*_joint": 0.2,
         "shoulder_roll_l_joint": 0.1,
-        "shoulder_yaw_l_joint": 0.0,
-        "elbow_pitch_l_joint": -0.5,
-        "elbow_yaw_l_joint": 0.0,
-        "wrist_pitch_l_joint": 0.0,
-        "wrist_roll_l_joint": 0.0,
-        "shoulder_pitch_r_joint": 0.2,
         "shoulder_roll_r_joint": -0.1,
-        "shoulder_yaw_r_joint": 0.0,
-        "elbow_pitch_r_joint": -0.5,
-        "elbow_yaw_r_joint": 0.0,
-        "wrist_pitch_r_joint": 0.0,
-        "wrist_roll_r_joint": 0.0,
+        ".*elbow_pitch.*_joint": -0.5,
     },
     joint_vel={".*": 0.0},
 )
@@ -232,19 +216,24 @@ HOME_KEYFRAME = EntityCfg.InitialStateCfg(
 #
 # Enables collisions for all geoms named *_collision. Feet (ankle pitch/roll
 # links) are given condim=3 for stable contact; the rest use condim=1.
+# Foot contact is softened (solref 0.02) and low torsion/slip friction to match
+# the G1 foot setup and avoid huge impact forces/NaN when the robot falls.
 ##
 
 FULL_COLLISION = CollisionCfg(
     geom_names_expr=(".*_collision",),
     condim={
-        r".*ankle_(pitch|roll)_[lr]_link_collision$": 3,
+        r".*foot.*_collision$": 3,
         ".*_collision": 1,
     },
     priority={
-        r".*ankle_(pitch|roll)_[lr]_link_collision$": 1,
+        r".*foot.*_collision$": 1,
     },
     friction={
-        r".*ankle_(pitch|roll)_[lr]_link_collision$": (0.6,),
+        r".*foot.*_collision$": (0.6, 0.005, 0.0001),
+    },
+    solref={
+        r".*foot.*_collision$": (0.02, 1.0),
     },
 )
 
@@ -286,18 +275,18 @@ def get_tienkung_evt2_robot_cfg() -> EntityCfg:
 ##
 # Action scale.
 #
-# Computes per-regex action scale as 0.25 * effort_limit / stiffness.
+# The original TienKung-Lab dex_walk config uses a constant action scale of
+# 0.25 rad for all joints. Keep that instead of the G1/H1 effort/stiffness
+# scaling, which gives the EVT2 ankles too much authority and drives the
+# heavy robot into joint limits.
 ##
 
 TIENKUNG_EVT2_ACTION_SCALE: dict[str, float] = {}
 for a in TIENKUNG_EVT2_ARTICULATION.actuators:
     assert isinstance(a, BuiltinPositionActuatorCfg)
-    e = a.effort_limit
-    s = a.stiffness
     names = a.target_names_expr
-    assert e is not None
     for n in names:
-        TIENKUNG_EVT2_ACTION_SCALE[n] = 0.25 * e / s
+        TIENKUNG_EVT2_ACTION_SCALE[n] = 0.25
 
 
 if __name__ == "__main__":
