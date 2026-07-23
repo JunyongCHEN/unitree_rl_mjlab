@@ -94,11 +94,11 @@
   </asset>
 
   <worldbody>
-    <!-- 地面 -->
-    <geom name="floor" type="plane" size="10 10 0.1" pos="0 0 0" quat="1 0 0 0" rgba="0.8 0.8 0.8 1" friction="1 0.005 0.0001" condim="3" />
-    
     <body name="pelvis" pos="0.00000000 0.00000000 0.94236470" quat="1 0 0 0" childclass="robot">
       <freejoint name="floating_base" />
+      <!-- Inertial from URDF/CSV (天工dex EVT2). Without this, MuJoCo infers ~42 kg
+           from the pelvis mesh and inflates total mass to ~95 kg vs the correct ~63 kg. -->
+      <inertial pos="0.000772 -0.000475 -0.060309" mass="10.579253" fullinertia="0.089056 0.072375 0.069877 -2.6e-05 -0.00093 0.000499" />
       <geom name="pelvis_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="pelvis.STL" class="collision" />
       <geom name="pelvis_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="pelvis_color" type="mesh" mesh="pelvis.STL" class="visual" />
       <body name="hip_pitch_l_link" pos="-0.00010305 0.076815 -0.11847" quat="0.9961946014678563 -0.08715426610788372 -5.8458732758832956e-05 0.0006681976291431778">
@@ -124,13 +124,21 @@
               <body name="ankle_pitch_l_link" pos="0 0 -0.4" quat="1.0 0.0 0.0 0.0">
                 <joint name="ankle_pitch_l_joint" type="hinge" ref="0.0" class="motor_55" range="-1.2217304763960306 0.5235987755982988" axis="0 1 0" />
                 <inertial pos="0.0 0.0 0.0" quat="1.0 0.0 0.0 0.0" mass="0.142658" diaginertia="2.3e-05 3.2e-05 4.9e-05" />
-                <geom name="ankle_pitch_l_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_pitch_l_link.STL" class="collision" />
+                <geom name="ankle_pitch_l_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_pitch_l_link.STL" class="collision" contype="0" conaffinity="0" />
                 <geom name="ankle_pitch_l_link_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="pelvis_color" type="mesh" mesh="ankle_pitch_l_link.STL" class="visual" />
                 <body name="ankle_roll_l_link" pos="0 0 0" quat="1.0 0.0 0.0 0.0">
                   <joint name="ankle_roll_l_joint" type="hinge" ref="0.0" class="motor_55" range="-0.5235987755982988 0.5235987755982988" axis="1 0 0" />
                   <inertial pos="0.024536 -1.7e-05 -0.033593" quat="1.0 0.0 0.0 0.0" mass="0.888892" diaginertia="0.000779 0.004839 0.005126" />
-                  <geom name="ankle_roll_l_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_roll_l_link.STL" class="collision" />
+                  <geom name="ankle_roll_l_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_roll_l_link.STL" class="collision" contype="0" conaffinity="0" />
                   <geom name="ankle_roll_l_link_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="pelvis_color" type="mesh" mesh="ankle_roll_l_link.STL" class="visual" />
+                  <!-- Foot contact capsules matching the original EVT2 URDF. -->
+                  <geom name="left_foot_front_outer_collision" pos="0.085 -0.03 -0.046" quat="0.7071068 0 0.7071068 0" type="capsule" size="0.012 0.03" class="collision" />
+                  <geom name="left_foot_front_inner_collision" pos="0.085 0.03 -0.046" quat="0.7071068 0 0.7071068 0" type="capsule" size="0.012 0.03" class="collision" />
+                  <geom name="left_foot_mid_outer_collision" pos="0.045 -0.02 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.01 0.10" class="collision" />
+                  <geom name="left_foot_mid_inner_collision" pos="0.045 0.02 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.01 0.10" class="collision" />
+                  <geom name="left_foot_strip_outer_collision" pos="0.045 -0.01 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.012 0.11" class="collision" />
+                  <geom name="left_foot_strip_center_collision" pos="0.045 0 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.012 0.12" class="collision" />
+                  <geom name="left_foot_strip_inner_collision" pos="0.045 0.01 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.012 0.11" class="collision" />
                   <site name="left_foot" rgba="1 0 0 1" pos="0 0 -0.04" size="0.02"/>
                 </body>
               </body>
@@ -161,13 +169,21 @@
               <body name="ankle_pitch_r_link" pos="0 0 -0.4" quat="1.0 0.0 0.0 0.0">
                 <joint name="ankle_pitch_r_joint" type="hinge" ref="0.0" class="motor_55" range="-1.2217304763960306 0.5235987755982988" axis="0 1 0" />
                 <inertial pos="0.0 0.0 0.0" quat="1.0 0.0 0.0 0.0" mass="0.142658" diaginertia="2.3e-05 3.2e-05 4.9e-05" />
-                <geom name="ankle_pitch_r_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_pitch_r_link.STL" class="collision" />
+                <geom name="ankle_pitch_r_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_pitch_r_link.STL" class="collision" contype="0" conaffinity="0" />
                 <geom name="ankle_pitch_r_link_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="pelvis_color" type="mesh" mesh="ankle_pitch_r_link.STL" class="visual" />
                 <body name="ankle_roll_r_link" pos="0 0 0" quat="1.0 0.0 0.0 0.0">
                   <joint name="ankle_roll_r_joint" type="hinge" ref="0.0" class="motor_55" range="-0.5235987755982988 0.5235987755982988" axis="1 0 0" />
                   <inertial pos="0.024536 1.7e-05 -0.033593" quat="1.0 0.0 0.0 0.0" mass="0.888892" diaginertia="0.000779 0.004839 0.005126" />
-                  <geom name="ankle_roll_r_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_roll_r_link.STL" class="collision" />
+                  <geom name="ankle_roll_r_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="ankle_roll_r_link.STL" class="collision" contype="0" conaffinity="0" />
                   <geom name="ankle_roll_r_link_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="pelvis_color" type="mesh" mesh="ankle_roll_r_link.STL" class="visual" />
+                  <!-- Foot contact capsules matching the original EVT2 URDF. -->
+                  <geom name="right_foot_front_outer_collision" pos="0.085 -0.03 -0.046" quat="0.7071068 0 0.7071068 0" type="capsule" size="0.012 0.03" class="collision" />
+                  <geom name="right_foot_front_inner_collision" pos="0.085 0.03 -0.046" quat="0.7071068 0 0.7071068 0" type="capsule" size="0.012 0.03" class="collision" />
+                  <geom name="right_foot_mid_outer_collision" pos="0.045 -0.02 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.01 0.10" class="collision" />
+                  <geom name="right_foot_mid_inner_collision" pos="0.045 0.02 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.01 0.10" class="collision" />
+                  <geom name="right_foot_strip_outer_collision" pos="0.045 -0.01 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.012 0.11" class="collision" />
+                  <geom name="right_foot_strip_center_collision" pos="0.045 0 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.012 0.12" class="collision" />
+                  <geom name="right_foot_strip_inner_collision" pos="0.045 0.01 -0.046" quat="0.7071068 0 -0.7071068 0" type="capsule" size="0.012 0.11" class="collision" />
                   <site name="right_foot" rgba="1 0 0 1" pos="0 0 -0.04" size="0.02"/>
                 </body>
               </body>
@@ -368,6 +384,10 @@
     <exclude body1="wrist_pitch_r_link" body2="wrist_roll_r_link" />
     <exclude body1="wrist_roll_r_link" body2="right_tcp_link" />
     <exclude body1="waist_pitch_link" body2="camera_body_front_link" />
+    <exclude body1="waist_pitch_link" body2="head_pitch_link" />
+    <exclude body1="waist_pitch_link" body2="camera_head_link" />
+    <exclude body1="knee_pitch_l_link" body2="ankle_roll_l_link" />
+    <exclude body1="knee_pitch_r_link" body2="ankle_roll_r_link" />
     <exclude body1="pelvis" body2="imu_waist_link" />
   </contact>
 
