@@ -51,3 +51,10 @@ from .tienkung_evt2.tienkung_evt2_constants import (
 from .tienkung_evt2.tienkung_evt2_constants import (
   get_tienkung_evt2_robot_cfg as get_tienkung_evt2_robot_cfg,
 )
+
+from .noetix_n2.noetix_n2_constants import (
+  NOETIX_N2_ACTION_SCALE as NOETIX_N2_ACTION_SCALE,
+)
+from .noetix_n2.noetix_n2_constants import (
+  get_noetix_n2_robot_cfg as get_noetix_n2_robot_cfg,
+)

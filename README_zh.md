@@ -23,6 +23,10 @@ Mjlab 结合了 [Isaac Lab](https://github.com/isaac-sim/IsaacLab) 的成熟高�
 
 安装和配置步骤请参考 [setup.md](doc/setup_zh.md)
 
+相关文档：
+- 新机器人移植教程：[robot_porting_guide_zh.md](doc/robot_porting_guide_zh.md)
+- Noetix N2 策略部署到真机（sim2real）：[noetix_n2_deploy_zh.md](doc/noetix_n2_deploy_zh.md)
+
 
 ## 🔁 流程概览
 
