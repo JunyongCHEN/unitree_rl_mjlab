@@ -81,10 +81,10 @@
                 <inertial pos="0.016737 0.019094 -0.019954" quat="-0.00314474 0.710307 -0.00552995 0.703863" mass="0.62716" diaginertia="0.00106349 0.00094107 0.000182528" />
                 <joint name="L_leg_ankle_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1 0.75" />
                 <geom class="visual" mesh="l_leg_ankle_link" rgba="1 1 1 1" name="l_leg_ankle_link_visual" />
-                <geom class="collision" name="left_foot1_collision" type="capsule" fromto="-0.018 -0.024 -0.075 0.026 -0.024 -0.075" size="0.011" />
-                <geom class="collision" name="left_foot2_collision" type="capsule" fromto="-0.018 -0.009 -0.075 0.026 -0.009 -0.075" size="0.011" />
-                <geom class="collision" name="left_foot3_collision" type="capsule" fromto="-0.018 0.009 -0.075 0.026 0.009 -0.075" size="0.011" />
-                <geom class="collision" name="left_foot4_collision" type="capsule" fromto="-0.018 0.024 -0.075 0.026 0.024 -0.075" size="0.011" />
+                <geom class="collision" name="left_foot1_collision" type="capsule" fromto="-0.067 -0.036 -0.0285 0.108 -0.036 -0.0285" size="0.011" />
+                <geom class="collision" name="left_foot2_collision" type="capsule" fromto="-0.067 -0.014 -0.0285 0.108 -0.014 -0.0285" size="0.011" />
+                <geom class="collision" name="left_foot3_collision" type="capsule" fromto="-0.067 0.008 -0.0285 0.108 0.008 -0.0285" size="0.011" />
+                <geom class="collision" name="left_foot4_collision" type="capsule" fromto="-0.067 0.030 -0.0285 0.108 0.030 -0.0285" size="0.011" />
                 <site name="left_foot" pos="0.004 0 -0.08" size="0.02" rgba="1 0 0 1" group="5" />
               </body>
               <geom class="collision" name="left_shin_collision" type="capsule" fromto="0 0 0 0.015 0 -0.25" size="0.04" />
@@ -136,10 +136,10 @@
                 <inertial pos="0.016737 -0.019095 -0.019954" quat="0.00313996 0.710307 0.00553352 0.703863" mass="0.62716" diaginertia="0.00106349 0.00094106 0.000182538" />
                 <joint name="R_leg_ankle_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1 0.75" />
                 <geom class="visual" mesh="r_leg_ankle_link" rgba="1 1 1 1" name="r_leg_ankle_link_visual" />
-                <geom class="collision" name="right_foot1_collision" type="capsule" fromto="-0.018 -0.024 -0.075 0.026 -0.024 -0.075" size="0.011" />
-                <geom class="collision" name="right_foot2_collision" type="capsule" fromto="-0.018 -0.009 -0.075 0.026 -0.009 -0.075" size="0.011" />
-                <geom class="collision" name="right_foot3_collision" type="capsule" fromto="-0.018 0.009 -0.075 0.026 0.009 -0.075" size="0.011" />
-                <geom class="collision" name="right_foot4_collision" type="capsule" fromto="-0.018 0.024 -0.075 0.026 0.024 -0.075" size="0.011" />
+                <geom class="collision" name="right_foot2_collision" type="capsule" fromto="-0.067 -0.014 -0.0285 0.108 -0.014 -0.0285" size="0.011" />
+                <geom class="collision" name="right_foot3_collision" type="capsule" fromto="-0.067 0.008 -0.0285 0.108 0.008 -0.0285" size="0.011" />
+                <geom class="collision" name="right_foot4_collision" type="capsule" fromto="-0.067 0.030 -0.0285 0.108 0.030 -0.0285" size="0.011" />
+                <geom class="collision" name="right_foot1_collision" type="capsule" fromto="-0.067 -0.036 -0.0285 0.108 -0.036 -0.0285" size="0.011" />
                 <site name="right_foot" pos="0.004 0 -0.08" size="0.02" rgba="1 0 0 1" group="5" />
               </body>
               <geom class="collision" name="right_shin_collision" type="capsule" fromto="0 0 0 0.015 0 -0.25" size="0.04" />
