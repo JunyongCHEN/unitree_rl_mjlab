@@ -1,0 +1,170 @@
+# mjlab / rsl_rl 训练出的 N2 速度策略部署参数
+#   模型: logs/rsl_rl/noetix_n2_velocity/2026-08-13_09-11-54/model_10000.pt
+#   -> ning/policy_mjlab.rknn (rk3588, float16, 65 -> 18)
+#
+# 这个文件只被 n2_mjlab_ctrl 读取，和厂家的 ning_user.yaml / ning_ac.yaml 无关。
+#
+# ⚠️ 观测归一化 (obs-mean)/(std+1e-2) 已经编译进 .rknn 图里，
+#    所以这里没有、也不能有 obs_scales。厂家 walk/run 那套缩放参数对本策略无效。
+
+mjlab_policy:
+
+  # ============ 以下三项来自训练，改了就和策略不匹配 ============
+
+  # action = 0 时的关节目标角 [rad]
+  # 注意 arm_l2/arm_r2 是 ±0.2（肩外展），不是 0；
+  # 厂家 STAND 姿态里这两个是 0，所以进策略前必须走 HOLD_DEFAULT 斜坡。
+  default_joint_angle:
+    arm_l1_joint:  0.0
+    arm_l2_joint:  0.2
+    arm_l3_joint:  0.0
+    arm_l4_joint:  0.0
+    leg_l1_joint:  0.0
+    leg_l2_joint:  0.0
+    leg_l3_joint: -0.1495
+    leg_l4_joint:  0.3215
+    leg_l5_joint: -0.1720
+    arm_r1_joint:  0.0
+    arm_r2_joint: -0.2
+    arm_r3_joint:  0.0
+    arm_r4_joint:  0.0
+    leg_r1_joint:  0.0
+    leg_r2_joint:  0.0
+    leg_r3_joint: -0.1495
+    leg_r4_joint:  0.3215
+    leg_r5_joint: -0.1720
+
+  # 训练时的 PD 增益（mjlab BuiltinPositionActuatorCfg）
+  # ⚠️ 踝关节是 kp=20 / kd=2。厂家 ning_ac.yaml 的 run 段是 15/1，别照抄那个。
+  stiffness:
+    arm_l1_joint:  30
+    arm_l2_joint:  30
+    arm_l3_joint:  30
+    arm_l4_joint:  30
+    leg_l1_joint:  80
+    leg_l2_joint:  80
+    leg_l3_joint: 120
+    leg_l4_joint: 120
+    leg_l5_joint:  20
+    arm_r1_joint:  30
+    arm_r2_joint:  30
+    arm_r3_joint:  30
+    arm_r4_joint:  30
+    leg_r1_joint:  80
+    leg_r2_joint:  80
+    leg_r3_joint: 120
+    leg_r4_joint: 120
+    leg_r5_joint:  20
+
+  damping:
+    arm_l1_joint: 1
+    arm_l2_joint: 1
+    arm_l3_joint: 1
+    arm_l4_joint: 1
+    leg_l1_joint: 5
+    leg_l2_joint: 5
+    leg_l3_joint: 5
+    leg_l4_joint: 5
+    leg_l5_joint: 2
+    arm_r1_joint: 1
+    arm_r2_joint: 1
+    arm_r3_joint: 1
+    arm_r4_joint: 1
+    leg_r1_joint: 5
+    leg_r2_joint: 5
+    leg_r3_joint: 5
+    leg_r4_joint: 5
+    leg_r5_joint: 2
+
+  # target_q = default_joint_angle + action_scale * action
+  action_scale: 0.25
+
+  observation:
+    phase_period: 0.6           # mdp.phase(period=0.6)
+    phase_stand_threshold: 0.1  # ‖[vx,vy,wz]‖ < 0.1 时 phase 置 0
+
+  # ============ 安全（训练里没有，纯粹是实机兜底）============
+
+  safety:
+    # 训练时 clip_actions = null，正常步态 |action| < ~4.2。
+    # 这里只拦异常值，不要调到 4 以下，否则会削掉正常动作。
+    clip_actions: 10.0
+    # projected_gravity[2] 直立时 ≈ -1；高于此值判定倾倒 -> 自动进阻尼
+    # -0.5 约等于躯干倾斜 60 度
+    fall_gravity_z: -0.5
+
+  # 关节硬限位 [rad]，来自 n2.xml 的 <joint range>。target_q 会被裁到这个范围内。
+  # 正常步态不会碰到；如果日志里 limit clamps 一直涨，说明有问题。
+  joint_limit_lower:
+    arm_l1_joint: -2.7
+    arm_l2_joint:  0.0
+    arm_l3_joint: -2.7
+    arm_l4_joint: -1.8
+    leg_l1_joint: -0.65
+    leg_l2_joint: -0.65
+    leg_l3_joint: -1.57
+    leg_l4_joint:  0.0
+    leg_l5_joint: -1.0
+    arm_r1_joint: -2.7
+    arm_r2_joint: -2.1
+    arm_r3_joint: -2.7
+    arm_r4_joint: -1.8
+    leg_r1_joint: -1.0
+    leg_r2_joint: -1.0
+    leg_r3_joint: -1.57
+    leg_r4_joint:  0.0
+    leg_r5_joint: -1.0
+
+  joint_limit_upper:
+    arm_l1_joint:  2.7
+    arm_l2_joint:  2.1
+    arm_l3_joint:  2.7
+    arm_l4_joint:  1.0
+    leg_l1_joint:  1.0
+    leg_l2_joint:  1.0
+    leg_l3_joint:  0.78
+    leg_l4_joint:  2.2
+    leg_l5_joint:  0.75
+    arm_r1_joint:  2.7
+    arm_r2_joint:  0.0
+    arm_r3_joint:  2.7
+    arm_r4_joint:  1.0
+    leg_r1_joint:  0.65
+    leg_r2_joint:  0.65
+    leg_r3_joint:  0.78
+    leg_r4_joint:  2.2
+    leg_r5_joint:  0.75
+
+  # ============ 遥控器映射 ============
+  # SDK 的 joydata 只暴露 2 个轴（common.h 里写死 axes[2]）：
+  #   axes[1] -> vx（前后）, axes[0] -> wz（转向），与厂家 usercontroller 一致。
+  # 横移（vy）拿不到，所以额外自己开一个只读 fd 直接读 /dev/input/js0，见 lateral_axis。
+  command:
+    # 第一次上机务必从小值开始，确认没问题再往训练上限调
+    # 训练命令范围: vx (-0.8, 1.2), vy (-0.5, 0.5), wz (-1.0, 1.0)
+    max_lin_vel_x: 0.3
+    max_lin_vel_y: 0.2     # 设成 0 则关闭横移（连 js0 都不会去开）
+    max_ang_vel_z: 0.5
+    const_lin_vel_y: 0.0   # 台架测试用的固定横移偏置，正常留 0
+    axis_deadzone: 0.08    # 让摇杆回中时指令精确为 0，phase 才能正确置 0
+    sign_lin_vel_x: 1.0    # 如果前后走反了，改成 -1.0
+    sign_lin_vel_y: 1.0    # 如果左右平移走反了，改成 -1.0
+    sign_ang_vel_z: 1.0    # 如果左右转反了，改成 -1.0
+    lpf_alpha: 1.0         # 1.0 = 不滤波（与训练一致）；0.2 左右可让指令更柔和
+
+    # 横移轴：直读 Linux 手柄设备补上 SDK 缺的那个轴。
+    # joydev 允许多个进程各自 open 同一个 js 设备，所以和 SDK 自己那一路不冲突。
+    lateral_axis:
+      device: /dev/input/js0   # 与 hwconfig.yaml 的 remote_port 一致
+      index: 2                 # ⚠️ 必须先用 ./n2_js_probe 确认是几号轴
+      debug: false             # true 时控制程序会打印动过的轴号（限频），也能用来找轴
+
+  # ============ 运行 ============
+  runtime:
+    # 策略必须跑在 50 Hz。hwconfig.yaml 里 loop_frequency: 500 -> decimation = 10。
+    # 程序启动后会实测回调频率并打印，如果不是 50 Hz 它会告诉你该填多少。
+    decimation: 10
+    npu_core_mask: 0       # 0/1/2 = 单核, 3 = 三核（小模型不建议）
+    log_first_obs: true
+    log_capacity_steps: 3000       # 60 s @ 50 Hz
+    log_path: /tmp/mjlab_obs_act.csv  # 退出策略模式时落盘；留空则不记录

@@ -59,8 +59,8 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*|arm|aarch64")
       rknnrt
   )
 else()
-  target_link_libraries(noetix_joint_controller 
-      PRIVATE pybind11::module 
+  target_link_libraries(noetix_joint_controller
+      PRIVATE pybind11::module
       Python3::Python
       ${LIB_DIR}/librlcontrol.a
       ${LIB_DIR}/libhardware.a
@@ -70,6 +70,52 @@ else()
       Threads::Threads
       spdlog::spdlog
   )
+endif()
+
+# =====================================================================
+# mjlab (rsl_rl) 速度策略 -> RK3588 NPU
+#   n2_mjlab_ctrl   实机控制程序（18 DoF, 65 维观测, 50 Hz）
+#   n2_rknn_check   上板自检：精度对 golden.bin + 推理耗时
+# librknnrt.so 随 SDK 附带在 lib/aarch64/，头文件在 include/rknpu2/，
+# 不依赖板子系统里是否装过 rknpu2。
+#
+# 注意 include/rknpu2 只加到这两个 target 上，不进全局 include_directories，
+# 这样厂家原来的 noetix_joint_controller 仍然用系统的 rknn_api.h，编译行为完全不变。
+# =====================================================================
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*|arm|aarch64")
+  add_executable(n2_mjlab_ctrl src/mjlab_controller_main.cpp src/mjlab_policy.cpp
+                               src/js_axis_reader.cpp)
+  target_include_directories(n2_mjlab_ctrl PRIVATE ${CMAKE_SOURCE_DIR}/include/rknpu2)
+  target_link_libraries(n2_mjlab_ctrl
+      PRIVATE pybind11::module
+      Python3::Python
+      ${LIB_DIR}/librlcontrol.a
+      ${LIB_DIR}/libhardware.a
+      ${LIB_DIR}/libsoem.a
+      ${LIB_DIR}/libyaml-cppd.a
+      # 策略本身走 NPU，不用 onnxruntime；但 librlcontrol.a 是拿 onnxruntime 编的，
+      # 它里面有静态初始化会引用 OrtGetApiBase，所以链它就必须一起链 onnxruntime。
+      onnxruntime
+      Threads::Threads
+      spdlog::spdlog
+      ${LIB_DIR}/librknnrt.so
+  )
+  # 运行时从 SDK 自带的 lib/aarch64 找 librknnrt.so（可执行文件输出在 SDK 根目录）
+  set_target_properties(n2_mjlab_ctrl PROPERTIES
+      BUILD_RPATH   "$ORIGIN/lib/aarch64"
+      INSTALL_RPATH "$ORIGIN/lib/aarch64")
+
+  add_executable(n2_rknn_check tools/n2_rknn_check.cpp)
+  target_include_directories(n2_rknn_check PRIVATE ${CMAKE_SOURCE_DIR}/include/rknpu2)
+  target_link_libraries(n2_rknn_check PRIVATE ${LIB_DIR}/librknnrt.so)
+  set_target_properties(n2_rknn_check PROPERTIES
+      BUILD_RPATH   "$ORIGIN/lib/aarch64"
+      INSTALL_RPATH "$ORIGIN/lib/aarch64")
+
+  # 手柄轴探测，用来确定横移摇杆是几号轴。不依赖 rknn / 厂家静态库。
+  add_executable(n2_js_probe tools/n2_js_probe.cpp src/js_axis_reader.cpp)
+else()
+  message(STATUS "not aarch64: skipping n2_mjlab_ctrl / n2_rknn_check (RKNN targets)")
 endif()
 
 
